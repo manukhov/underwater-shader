@@ -6,7 +6,6 @@ const char* HLSL =
 "    return float4(1.0, 0.0, 0.0, 1.0); // RED \n"
 "}\n";
 
-
 IDirect3DPixelShader9* CompilePixelShader(IDirect3DDevice9* pDevice, const char* HLSL) {
     IDirect3DPixelShader9* pixelShader = nullptr;
     IDirect3DPixelShader9* shader = nullptr;
