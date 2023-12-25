@@ -1,21 +1,53 @@
 #include "shader.hpp"
 
+const char* HLSL =
+"float4 main() : COLOR0\n"
+"{\n"
+"    return float4(1.0, 0.0, 0.0, 1.0); // RED \n"
+"}\n";
+
+
+IDirect3DPixelShader9* CompilePixelShader(IDirect3DDevice9* pDevice, const char* HLSL) {
+    IDirect3DPixelShader9* pixelShader = nullptr;
+    IDirect3DPixelShader9* shader = nullptr;
+    ID3DXBuffer* shaderBuffer = nullptr;
+    ID3DXBuffer* errorBuffer = nullptr;
+
+    HRESULT hr = D3DXCompileShader(HLSL, strlen(HLSL), nullptr, nullptr, "main", "ps_2_0", 0, &shaderBuffer, &errorBuffer, nullptr);
+    if (FAILED(hr)) 
+    {
+        if (errorBuffer) 
+        {
+            const char* errorMsg = static_cast<const char*>(errorBuffer->GetBufferPointer());
+            MessageBoxA(nullptr, errorMsg, "Shader Compilation Error", MB_OK | MB_ICONERROR);
+            errorBuffer->Release();
+        }
+        return nullptr;
+    }
+
+    hr = g_rwD3D9CreatePixelShader(reinterpret_cast<const uint32_t>(shaderBuffer->GetBufferPointer()), &shader);
+    if (FAILED(hr)) {
+        if (shaderBuffer)
+            shaderBuffer->Release();
+        return nullptr;
+    }
+
+    if (shaderBuffer)
+        shaderBuffer->Release();
+    if (errorBuffer)
+        errorBuffer->Release();
+
+    return shader;
+}
+
 HRESULT __cdecl hkCPostEffectsRender(int arg1, float arg2, float arg3, int arg4, float arg5, float arg6) 
 {
-    const uint32_t pixelShader[] = { 0x12345678, 0x8765432 };
+    IDirect3DDevice9* pDevice = *(IDirect3DDevice9**)(0xC97C28);
+    IDirect3DPixelShader9* pixelShader = CompilePixelShader(pDevice, HLSL);
 
-    void* pixelShaderHandle = nullptr;
-
-    HRESULT result = g_rwD3D9CreatePixelShader(pixelShader, &pixelShaderHandle);
-    if (SUCCEEDED(result))
-        result = g_rwD3D9SetPixelShader(pixelShaderHandle);
-    else
-        return g_CPostEffectsRender(arg1, arg2, arg3, arg4, arg5, arg6);
-    if (SUCCEEDED(result)) 
-        g_rwD3D9DrawPrimitive(D3DPT_TRIANGLELIST, 0, 6);
-    else
-        return g_CPostEffectsRender(arg1, arg2, arg3, arg4, arg5, arg6);
-    
+    if (pixelShader) 
+        pDevice->SetPixelShader(pixelShader); // +
+    //  g_rwD3D9SetPixelShader(pixelShader); // -
     return S_OK;
 }
 

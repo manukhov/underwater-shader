@@ -1,4 +1,5 @@
 #include <d3d9.h>
+#include <d3dx9.h>
 #include <thread>
 
 #define rwTEXTUREBASENAMELENGTH     32
@@ -73,7 +74,7 @@ rwD3D9DrawPrimitive g_rwD3D9DrawPrimitive = (rwD3D9DrawPrimitive)0x7FA360;
 typedef HRESULT(__cdecl* rwD3D9DrawIndexedPrimitive)(uint32_t primitiveType, uint32_t baseVertexIndex, uint32_t minIndex, uint32_t numVertices, uint32_t startIndex, uint32_t primitiveCount);
 rwD3D9DrawIndexedPrimitive g_rwD3D9DrawIndexedPrimitive = (rwD3D9DrawIndexedPrimitive)0x7FA320;
 
-typedef HRESULT(__cdecl* rwD3D9CreatePixelShader)(const uint32_t* function, void* shader);
+typedef HRESULT(__cdecl* rwD3D9CreatePixelShader)(const uint32_t function, void* shader);
 rwD3D9CreatePixelShader g_rwD3D9CreatePixelShader = (rwD3D9CreatePixelShader)0x7FACC0;
 
 typedef HRESULT(__cdecl* rwD3D9SetPixelShader)(void* shader);
