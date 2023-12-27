@@ -62,8 +62,8 @@ struct RwTexture
     uint32_t          refCount;
 };
 
-typedef HRESULT(__cdecl* CPostEffectsRender)(uint32_t arg1, float arg2, float arg3, uint32_t arg4, float arg5, float arg6);
-CPostEffectsRender g_CPostEffectsRender = (CPostEffectsRender)0x7039C0;
+typedef HRESULT(__cdecl* UnderwaterEffect)(uint32_t arg1, float arg2, float arg3, uint32_t arg4, float arg5, float arg6);
+UnderwaterEffect g_UnderwaterEffect = (UnderwaterEffect)0x7039C0;
 
 typedef HRESULT(__cdecl* rwD3D9RWSetRenderState)(uint32_t state, uint32_t value);
 rwD3D9RWSetRenderState g_rwD3D9RWSetRenderState = (rwD3D9RWSetRenderState)0x7FE420; // 0x7FC2D0 ?

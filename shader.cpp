@@ -6,8 +6,8 @@ const char* HLSL =
 "    return float4(1.0, 0.0, 0.0, 1.0); // RED \n"
 "}\n";
 
-IDirect3DPixelShader9* CompilePixelShader(IDirect3DDevice9* pDevice, const char* HLSL) {
-    IDirect3DPixelShader9* pixelShader = nullptr;
+IDirect3DPixelShader9* CompilePixelShader(const char* HLSL) 
+{
     IDirect3DPixelShader9* shader = nullptr;
     ID3DXBuffer* shaderBuffer = nullptr;
     ID3DXBuffer* errorBuffer = nullptr;
@@ -39,27 +39,18 @@ IDirect3DPixelShader9* CompilePixelShader(IDirect3DDevice9* pDevice, const char*
     return shader;
 }
 
-HRESULT __cdecl hkCPostEffectsRender(int arg1, float arg2, float arg3, int arg4, float arg5, float arg6) 
+HRESULT __cdecl hkUnderwaterEffect(int arg1, float arg2, float arg3, int arg4, float arg5, float arg6) 
 {
-    IDirect3DDevice9* pDevice = *(IDirect3DDevice9**)(0xC97C28);
-    IDirect3DPixelShader9* pixelShader = CompilePixelShader(pDevice, HLSL);
+    IDirect3DPixelShader9* pixelShader = CompilePixelShader(HLSL);
 
-    if (pixelShader) 
-        pDevice->SetPixelShader(pixelShader); // +
-    //  g_rwD3D9SetPixelShader(pixelShader); // -
-    return S_OK;
-}
+    if (!pixelShader)
+        return g_UnderwaterEffect(arg1, arg2, arg3, arg4, arg5, arg6);
 
-void hkInstall() 
-{
-    while (*reinterpret_cast<uint32_t*>(0xC8D4C0) < 9)  // Is game initialized?
-        std::this_thread::sleep_for(std::chrono::milliseconds{100});
+    memset(reinterpret_cast<void*>(0x7FB824), 0x90, 5);
+    g_rwD3D9SetPixelShader(pixelShader);
+    pixelShader->Release();
 
-    DWORD hkCall_CPostEffectsRender = 0x70529C; // CPostEffects::Render caller
-
-    *(BYTE*)hkCall_CPostEffectsRender = 0xE8;
-    *(DWORD*)(hkCall_CPostEffectsRender + 1) = (DWORD)hkCPostEffectsRender - hkCall_CPostEffectsRender - 5;
- 
+    return D3D_OK;
 }
 
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD fdwReason, LPVOID lpReserved) 
@@ -67,7 +58,11 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD fdwReason, LPVOID lpReserved)
     if (fdwReason) 
     {
         DisableThreadLibraryCalls(hModule);
-        CreateThread(NULL, NULL, (LPTHREAD_START_ROUTINE)hkInstall, NULL, NULL, NULL);
+
+        DWORD hkCall_UnderwaterEffect = 0x70529C;
+
+        *(BYTE*)hkCall_UnderwaterEffect = 0xE8;
+        *(DWORD*)(hkCall_UnderwaterEffect + 1) = (DWORD)hkUnderwaterEffect - hkCall_UnderwaterEffect - 5;
     }
     return TRUE;
 }
