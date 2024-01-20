@@ -4,11 +4,11 @@ include(FetchContent)
 
 set(CMAKE_GENERATOR_PLATFORM Win32)
 
-project(underwater_anticheat)
+project(underwater_shader)
 
 add_library(${PROJECT_NAME} MODULE)
 
-target_sources(${PROJECT_NAME} PRIVATE shader.cpp shader.hpp)
+target_sources(${PROJECT_NAME} PRIVATE main.cpp RenderWare.h)
 
 set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:DebugDLL>")
 
