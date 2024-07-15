@@ -50,6 +50,31 @@ void SetShaderCB(DWORD shader)
 	RwD3D9SetPixelShader(g_Shader);
 }
 
+void ShowDebug()
+{
+	static bool DebugShown = false;
+
+	if (!DebugShown && g_Raster && GameCamera->frameBuffer)
+	{
+		int frameBufferFormat = GameCamera->frameBuffer->cFormat;
+		int frameBufferDepth = GameCamera->frameBuffer->depth;
+		int frameBufferType = GameCamera->frameBuffer->cType;
+
+		int rasterFormat = g_Raster->cFormat;
+		int rasterDepth = g_Raster->depth;
+		int rasterType = g_Raster->cType;
+
+		char message[256];
+		sprintf(message, "GameCamera->frameBuffer->cFormat: %d\nGameCamera->frameBuffer->depth: %d\nGameCamera->frameBuffer->cType: %d\ng_Raster->cFormat: %d\ng_Raster->depth: %d\ng_Raster->cType: %d",
+			frameBufferFormat, frameBufferDepth, frameBufferType, rasterFormat, rasterDepth, rasterType);
+
+		MessageBoxA(NULL, message, "Debug Info", MB_OK | MB_ICONINFORMATION);
+	}
+
+	DebugShown = true;
+}
+
+
 void Render()
 {
 	fnrender();
@@ -67,6 +92,7 @@ void Render()
 		if (!g_Raster)
 			g_Raster = RwRasterCreate(width, height, depth, GameCamera->frameBuffer->cFormat |  GameCamera->frameBuffer->cType);
 	}
+	ShowDebug();
 	RwCameraEndUpdate(GameCamera);
 	RwRasterPushContext(g_Raster);
 	RwRasterRenderFast(GameCamera->frameBuffer, 0, 0);
