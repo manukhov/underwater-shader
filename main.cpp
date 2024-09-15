@@ -55,7 +55,7 @@ const char* shaderHLSL =
 "}\n"
 "technique GrayscaleScreen {\n"
 "    pass P0 {\n"
-"        PixelShader = compile ps_3_0 mainPS();\n"
+"        PixelShader = compile ps_3_0 main();\n"
 "    }\n"
 "}\n";
 
@@ -70,9 +70,9 @@ void CompileShader()
 {
     LogMessage("Starting shader compilation...");
 
-    HRESULT hr = D3DXCompileShader(shaderHLSL, strlen(shaderHLSL), NULL, NULL, "main", "ps_3_0", 0, &pCode, &pErrors, NULL);
+    HRESULT result = D3DXCompileShader(shaderHLSL, strlen(shaderHLSL), NULL, NULL, "main", "ps_3_0", 0, &pCode, &pErrors, NULL);
 
-    if (FAILED(hr))
+    if (FAILED(result))
     {
         LogMessage("Shader compilation failed.");
         if (pErrors)
@@ -106,6 +106,18 @@ void CompileShader()
 void SetShaderCB()
 {
     RwD3D9SetPixelShader(g_Shader);
+    IDirect3DDevice9* pDevice = *(IDirect3DDevice9**)(0xC97C28);
+
+    IDirect3DPixelShader9* CurrentShader = nullptr;
+    pDevice->GetPixelShader(&CurrentShader);
+
+    if (CurrentShader == g_Shader)
+        LogMessage("Pixel shader set successfully.");
+    else
+        LogMessage("Failed to set pixel shader.");
+
+    if (CurrentShader)
+        CurrentShader->Release();
 }
 
 void Render()
