@@ -153,7 +153,7 @@ BOOL APIENTRY DllMain(HMODULE module, DWORD reason, LPVOID reserved)
     if (reason == DLL_PROCESS_ATTACH)
     {
         memcpy(reinterpret_cast<void*>(0x705125), "\xE9\x7A\x01\x00\x00\x90\x90\x90", 8);
-        fnrender = injector::MakeCALL(0x53E170, Render).get();
+        fnrender = injector::MakeCALL(0x53EAD3, Render).get();
     }
     return TRUE;
 }
