@@ -16,7 +16,8 @@ ID3DXBuffer* pDisassembly = nullptr;
 IDirect3DPixelShader9* g_Shader = nullptr;
 IDirect3DPixelShader9* g_CurrentShader = nullptr;
 
-RwRaster* g_Raster = nullptr;
+RwRaster* workBuffer = nullptr;
+
 
 bool bShaderCompiled = false;
 bool bShaderSetSuccessfully = false;
@@ -157,7 +158,7 @@ void Render()
         }
         if (workBuffer == NULL)
         {
-            workBuffer = RwRasterCreate(pRasterFrontBuffer->width, pRasterFrontBuffer->height, pRasterFrontBuffer->depth, rwRASTERTYPECAMERATEXTURE);
+            workBuffer = RwRasterCreate(GameCamera->frameBuffer->width, GameCamera->frameBuffer->height, GameCamera->frameBuffer->depth, rwRASTERTYPECAMERATEXTURE);
             if (workBuffer == NULL)
             {
                 Debug("Failed to create raster");
